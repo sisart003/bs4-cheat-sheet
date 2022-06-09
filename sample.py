@@ -1,3 +1,4 @@
+import doctest
 import re
 # from bs4 import BeautifulSoup
 
@@ -682,3 +683,133 @@ from bs4 import NavigableString
 # print(soup.get_text("|"))
 # print(soup.get_text("|", strip="True"))
 # print(text for text in soup.stripped_strings)
+
+######################################################
+#            Specifying the parser to use            #
+######################################################
+
+# Differences between parsers
+# print(BeautifulSoup('<a></b></a>', 'html.parser'))
+# print(BeautifulSoup('<a></b></a>', 'xml'))
+# print(BeautifulSoup('<a></p>', 'lxml'))
+# print(BeautifulSoup('<a></p>', 'html5lib'))
+# print(BeautifulSoup('<a></p>', 'html.parser'))
+
+###################################
+#            Encodings            #
+###################################
+
+# markup = "<h1>Sacr\xc3\xa9 bleu!</h1>"
+# soup = BeautifulSoup(markup, 'html.parser')
+# print(soup.h1)
+# print(soup.h1.string)
+# print(soup.original_encoding)
+
+# markup = b'<h1>\xed\xe5\xec\xf9</h1>'
+# soup = BeautifulSoup(markup, 'html.parser')
+# print(soup.h1)
+# print(soup.original_encoding)
+
+# soup = BeautifulSoup(markup, 'html.parser', from_encoding='iso-8859-8')
+# print(soup.h1)
+# print(soup.original_encoding)
+
+# soup = BeautifulSoup(markup, 'html.parser', exclude_encodings=['iso-8859-7'])
+# print(soup.h1)
+# print(soup.original_encoding)
+
+# Output encoding
+# markup = b'''
+# <html>
+#     <head>
+#         <meta content="text/html; charset=ISO-Latin-1" http-equiv="Content-type" />
+#     </head>
+#     <body>
+#         <p>Sacr\xe9 bleu!</p>
+#     </body>
+# </html>
+# '''
+
+# soup = BeautifulSoup(markup, 'html.parser')
+# print(soup.prettify())
+# print(soup.prettify("latin-1"))
+# print(soup.p.encode('latin-1'))
+# print(soup.p.encode('utf-8'))
+
+# markup = u'<b>\N{SNOWMAN}</b>'
+# snowman_soup = BeautifulSoup(markup, 'html.parser')
+# tag = snowman_soup.b
+# print(tag.encode('utf-8'))
+# print(tag.encode('latin-1'))
+# print(tag.encode('ascii'))
+
+# Unicode, Dammit
+# from bs4 import UnicodeDammit
+# dammit = UnicodeDammit('Sacr\xc3\xa9 bleu!')
+# print(dammit.unicode_markup)
+# print(dammit.original_encoding)
+
+# dammit = UnicodeDammit('Sacr\xe9 bleu!', ['latin-1', 'iso-8859-1'])
+# print(dammit.unicode_markup)
+# print(dammit.original_encoding)
+
+# Smart quotes
+# markup = b'<p>I just \x93love\x94 Microsoft Word\x92s smart quotes</p>'
+# print(UnicodeDammit(markup, ['windows-1252'], smart_quotes_to='html').unicode_markup)
+# print(UnicodeDammit(markup, ['windows-1252'], smart_quotes_to='xml').unicode_markup)
+# print(UnicodeDammit(markup, ['windows-1252'], smart_quotes_to='ascii').unicode_markup)
+# print(UnicodeDammit(markup, ['windows-1252']).unicode_markup)
+
+# Inconsistent encodings
+# snowmen = (u"\N{SNOWMAN}" * 3)
+# quote = (u"\N{LEFT DOUBLE QUOTATION MARK}I like snowmen!\N{RIGHT DOUBLE QUOTATION MARK}")
+# doc = snowmen.encode('utf8') + quote.encode('windows_1252')
+# print(doc)
+# print(doc.decode('windows-1252'))
+
+# new_doc = UnicodeDammit.detwingle(doc)
+# print(new_doc.decode('utf8'))
+
+######################################
+#            Line numbers            #
+######################################
+
+# markup = "<p\n>Paragraph 1</p>\n    <p>Paragraph 2</p>"
+# soup = BeautifulSoup(markup, 'html.parser')
+# for tag in soup.find_all('p'):
+#     print(repr((tag.sourceline, tag.sourcepos, tag.string)))
+
+# soup = BeautifulSoup(markup, 'html5lib')
+# for tag in soup.find_all('p'):
+#     print(repr((tag.sourceline, tag.sourcepos, tag.string)))
+
+# markup = '<p\n>Paragraph 1</p>\n    <p>Paragraph 2</p>'
+# soup = BeautifulSoup(markup, 'html.parser', store_line_numbers=False)
+# print(soup.p.sourceline)
+
+########################################################
+#            Comparing objects for equality            #
+########################################################
+
+# markup = "<p>I want <b>pizza</b> and more <b>pizza</b>!</p>"
+# soup = BeautifulSoup(markup, 'html.parser')
+# first_b, second_b = soup.find_all('b')
+# print(first_b == second_b)
+# print(first_b.previous_element == second_b.previous_element)
+# print(first_b is second_b)
+
+########################################################
+#            Copying Beautiful Soup objects            #
+########################################################
+
+# import copy
+# p_copy = copy.copy(soup.p)
+# print(p_copy)
+# print(soup.p == p_copy)
+# print(soup.p is p_copy)
+# print(p_copy.parent)
+
+#######################################################
+#            Advanced parser customization            #
+#######################################################
+
