@@ -287,7 +287,7 @@ soup = BeautifulSoup(html_doc, 'html.parser')
 
 # print(soup.find_all(href=not_lacie))
 
-from bs4 import NavigableString
+# from bs4 import NavigableString
 # def surrounded_by_strings(tag):
 #     return (isinstance(tag.next_element, NavigableString) and isinstance(tag.previous_element, NavigableString))
 
@@ -812,4 +812,81 @@ from bs4 import NavigableString
 #######################################################
 #            Advanced parser customization            #
 #######################################################
+# Parsing only part of a document
 
+# SoupStrainer
+# from bs4 import SoupStrainer
+
+# only_a_tags = SoupStrainer('a')
+# only_tags_with_id_link2 = SoupStrainer(id='link2')
+
+# def is_short_string(string):
+#     return string is not None and len(string) < 10
+
+# only_short_strings = SoupStrainer(string=is_short_string)
+
+# print(BeautifulSoup(html_doc, 'html.parser', parse_only=only_a_tags).prettify())
+# print(BeautifulSoup(html_doc, 'html.parser', parse_only=only_tags_with_id_link2).prettify())
+# print(BeautifulSoup(html_doc, 'html.parser', parse_only=only_short_strings).prettify())
+
+# soup = BeautifulSoup(html_doc, 'html.parser')
+# print(soup.find_all(only_short_strings))
+
+# Customizing multi-valued attributes
+# markup = '<a class="cls1 cls2" id="id1 id2">'
+# soup = BeautifulSoup(markup, 'html.parser')
+# print(soup.a['class'])
+# print(soup.a['id'])
+
+# soup = BeautifulSoup(markup, 'html.parser', multi_valued_attributes=None)
+# print(soup.a['class'])
+# print(soup.a['id'])
+
+# Handling duplicate attributes
+# markup = '<a href="http://url1/" href="http://url2/">'
+# soup = BeautifulSoup(markup, 'html.parser')
+# print(soup.a['href'])
+
+# soup = BeautifulSoup(markup, 'html.parser', on_duplicate_attribute='replace')
+# print(soup.a['href'])
+
+# soup = BeautifulSoup(markup, 'html.parser', on_duplicate_attribute='ignore')
+# print(soup.a['href'])
+
+# def accumulate(attributes_so_far, key, value):
+#     if not isinstance(attributes_so_far[key], list):
+#         attributes_so_far[key] = [attributes_so_far[key]]
+#     attributes_so_far[key].append(value)
+
+# soup = BeautifulSoup(markup, 'html.parser', on_duplicate_attribute=accumulate)
+# print(soup.a['href'])
+
+# Instantiating custom subclasses
+
+# from bs4 import Tag, NavigableString
+
+# class MyTag(Tag):
+#     pass
+
+# class MyString(NavigableString):
+#     pass
+
+# markup = '<div>some text</div>'
+# soup = BeautifulSoup(markup, 'html.parser')
+# print(isinstance(soup.div, MyTag))
+# print(isinstance(soup.div.string, MyString))
+
+# my_classes = { Tag: MyTag, NavigableString: MyString}
+# soup = BeautifulSoup(markup, 'html.parser', element_classes=my_classes)
+# print(isinstance(soup.div, MyTag))
+# print(isinstance(soup.div.string, MyString))
+
+#########################################
+#            Troubleshooting            #
+#########################################
+
+# diagnose()
+from bs4.diagnose import diagnose
+with open('index.html') as fp:
+    data = fp.read()
+print(diagnose(data))
